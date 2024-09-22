@@ -39,6 +39,7 @@ export function Calendar({ selectedDate, onDateSelected }: CalendarProps) {
     return dayjs().set('date', 1)
   })
 
+  console.log(selectedDate)
   const router = useRouter()
   const username = String(router.query.username)
 

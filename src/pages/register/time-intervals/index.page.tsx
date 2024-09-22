@@ -6,8 +6,8 @@ import {
   MultiStep,
   Text,
   TextInput,
-} from '@ignite-ui/react'
-import { Container, Header } from '../styles'
+} from "@ignite-ui/react";
+import { Container, Header } from "../styles";
 import {
   FormError,
   IntervalBox,
@@ -15,17 +15,17 @@ import {
   IntervalDay,
   IntervalInputs,
   IntervalItem,
-} from './styles'
-import { getWeekDays } from '../../../utils/get-week-days'
-import { ArrowRight } from 'phosphor-react'
-import { Controller, useFieldArray, useForm } from 'react-hook-form'
-import { z } from 'zod'
-import { zodResolver } from '@hookform/resolvers/zod'
+} from "./styles";
+import { getWeekDays } from "../../../utils/get-week-days";
+import { ArrowRight } from "phosphor-react";
+import { Controller, useFieldArray, useForm } from "react-hook-form";
+import { z } from "zod";
+import { zodResolver } from "@hookform/resolvers/zod";
 
-import { convertTimeStringToMinutes } from '@/utils/convertTimeStringToMinutes'
-import { api } from '@/lib/axios'
-import { useRouter } from 'next/router'
-import { NextSeo } from 'next-seo'
+import { convertTimeStringToMinutes } from "@/utils/convertTimeStringToMinutes";
+import { api } from "@/lib/axios";
+import { useRouter } from "next/router";
+import { NextSeo } from "next-seo";
 
 const timeIntervalsFormSchema = z.object({
   intervals: z
@@ -42,7 +42,7 @@ const timeIntervalsFormSchema = z.object({
     .length(7)
     .transform((intervals) => intervals.filter((internal) => internal.enabled)) // transforma os dados  se o campo for true trás se não deixa.
     .refine((intervals) => intervals.length > 0, {
-      message: 'Você precisa selecionar pelo menos um dia da semana',
+      message: "Você precisa selecionar pelo menos um dia da semana",
     })
     .transform((internals) => {
       return internals.map((internal) => {
@@ -50,25 +50,25 @@ const timeIntervalsFormSchema = z.object({
           weekDay: internal.weekDay,
           startTimeInMinutes: convertTimeStringToMinutes(internal.startTime),
           endTimeInMinutes: convertTimeStringToMinutes(internal.endTime),
-        }
-      })
+        };
+      });
     })
     .refine(
       (internals) => {
         return internals.every(
           (interval) =>
             interval.endTimeInMinutes - 60 >= interval.startTimeInMinutes,
-        )
+        );
       },
       {
         message:
-          'O horário de término deve ser pelo menos 1h distante do início.',
+          "O horário de término deve ser pelo menos 1h distante do início.",
       },
     ),
-})
+});
 
 //  type TimeIntervalsFormInput = z.input<typeof timeIntervalsFormSchema>
-type TimeIntervalsFormOutput = z.output<typeof timeIntervalsFormSchema>
+type TimeIntervalsFormOutput = z.output<typeof timeIntervalsFormSchema>;
 
 export default function TimeIntervals() {
   const {
@@ -81,34 +81,34 @@ export default function TimeIntervals() {
     resolver: zodResolver(timeIntervalsFormSchema),
     defaultValues: {
       intervals: [
-        { weekDay: 0, enabled: false, startTime: '08:00', endTime: '18:00' },
-        { weekDay: 1, enabled: true, startTime: '08:00', endTime: '18:00' },
-        { weekDay: 2, enabled: true, startTime: '08:00', endTime: '18:00' },
-        { weekDay: 3, enabled: true, startTime: '08:00', endTime: '18:00' },
-        { weekDay: 4, enabled: true, startTime: '08:00', endTime: '18:00' },
-        { weekDay: 5, enabled: true, startTime: '08:00', endTime: '18:00' },
-        { weekDay: 6, enabled: false, startTime: '08:00', endTime: '18:00' },
+        { weekDay: 0, enabled: false, startTime: "08:00", endTime: "18:00" },
+        { weekDay: 1, enabled: true, startTime: "08:00", endTime: "18:00" },
+        { weekDay: 2, enabled: true, startTime: "08:00", endTime: "18:00" },
+        { weekDay: 3, enabled: true, startTime: "08:00", endTime: "18:00" },
+        { weekDay: 4, enabled: true, startTime: "08:00", endTime: "18:00" },
+        { weekDay: 5, enabled: true, startTime: "08:00", endTime: "18:00" },
+        { weekDay: 6, enabled: false, startTime: "08:00", endTime: "18:00" },
       ],
     },
-  })
+  });
 
-  const router = useRouter()
+  const router = useRouter();
 
-  const weekDays = getWeekDays()
+  const weekDays = getWeekDays();
 
   const { fields } = useFieldArray({
     control,
-    name: 'intervals',
-  })
+    name: "intervals",
+  });
 
-  const intervals = watch('intervals')
+  const intervals = watch("intervals");
 
   async function handleSetTimeIntervals(data: any) {
-    const { intervals } = data as TimeIntervalsFormOutput
+    const { intervals } = data as TimeIntervalsFormOutput;
 
-    await api.post('/users/time-intervals', { intervals })
+    await api.post("/users/time-intervals", { intervals });
 
-    await router.push('/register/update-profile')
+    await router.push("/register/update-profile");
   }
 
   return (
@@ -142,7 +142,7 @@ export default function TimeIntervals() {
                             }
                             checked={field.value} // pega o valor inicial passado no array aki
                           />
-                        )
+                        );
                       }}
                     />
                     <Text>{weekDays[field.weekDay]}</Text>
@@ -170,7 +170,7 @@ export default function TimeIntervals() {
                     />
                   </IntervalInputs>
                 </IntervalItem>
-              )
+              );
             })}
           </IntervalContainer>
 
@@ -185,5 +185,5 @@ export default function TimeIntervals() {
         </IntervalBox>
       </Container>
     </>
-  )
+  );
 }
