@@ -1,33 +1,33 @@
-import { NextApiRequest, NextApiResponse } from "next";
-import { getServerSession } from "next-auth";
-import { buildNextAuthOptions } from "../auth/[...nextauth].api";
-import { z } from "zod";
-import { prisma } from "@/lib/prisma";
+import { NextApiRequest, NextApiResponse } from 'next'
+import { getServerSession } from 'next-auth'
+import { buildNextAuthOptions } from '../auth/[...nextauth].api'
+import { z } from 'zod'
+import { prisma } from '@/lib/prisma'
 
 const updateProfileBodySchema = z.object({
   bio: z.string(),
-});
+})
 
 export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse,
 ) {
-  if (req.method !== "PUT") {
+  if (req.method !== 'PUT') {
     // se o método não for post dá error
-    return res.status(405).end();
+    return res.status(405).end()
   }
 
   const session = await getServerSession(
     req,
     res,
     buildNextAuthOptions(req, res),
-  );
+  )
 
   if (!session) {
-    return res.status(401).end();
+    return res.status(401).end()
   }
 
-  const { bio } = updateProfileBodySchema.parse(req.body); // O método parse pega os dados de req.body (o corpo da requisição HTTP) e os valida de acordo com o esquema timeIntervalsBodySchema.
+  const { bio } = updateProfileBodySchema.parse(req.body) // O método parse pega os dados de req.body (o corpo da requisição HTTP) e os valida de acordo com o esquema timeIntervalsBodySchema.
 
   await prisma.user.update({
     where: {
@@ -36,7 +36,7 @@ export default async function handler(
     data: {
       bio,
     },
-  });
+  })
 
-  return res.status(204).end();
+  return res.status(204).end()
 }
